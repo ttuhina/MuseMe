@@ -9,8 +9,8 @@ A simple web app that fetches lyrics and artist information using `async/await` 
 - Clean UI with error handling
 - Built with HTML, CSS, and vanilla JavaScript
 
-![Display](https://github.com/ttuhina/MuseMe/blob/main/screenshots/Screenshot1.png)
-![Display](https://github.com/ttuhina/MuseMe/blob/main/screenshots/Screenshot2.png)
+![Display](https://github.com/ttuhina/MuseMe/blob/main/Screenshot%202025-06-22%20185714.png)
+![Display](https://github.com/ttuhina/MuseMe/blob/main/Screenshot%202025-06-22%20185721.png)
 
 
 ## APIs Used
