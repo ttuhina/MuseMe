@@ -6,14 +6,12 @@ const url = require('url');
 
 const PORT = process.env.PORT || 3000;
 
-// Simple CORS headers
 function setCorsHeaders(res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-// Simple HTTP/HTTPS client using built-in modules
 function httpGet(urlString) {
     return new Promise((resolve, reject) => {
         const parsedUrl = new URL(urlString);
@@ -71,7 +69,6 @@ function httpGet(urlString) {
     });
 }
 
-// Get MIME type for files
 function getMimeType(filePath) {
     const ext = path.extname(filePath).toLowerCase();
     const mimeTypes = {
@@ -87,11 +84,9 @@ function getMimeType(filePath) {
     return mimeTypes[ext] || 'application/octet-stream';
 }
 
-// Create HTTP server
 const server = http.createServer(async (req, res) => {
     setCorsHeaders(res);
     
-    // Handle preflight requests
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
@@ -102,7 +97,6 @@ const server = http.createServer(async (req, res) => {
     const pathname = parsedUrl.pathname;
 
     try {
-        // API Routes
         if (pathname.startsWith('/api/search/')) {
             const pathParts = pathname.split('/');
             if (pathParts.length >= 5) {
@@ -120,7 +114,6 @@ const server = http.createServer(async (req, res) => {
                 };
 
                 try {
-                    // Try to fetch lyrics
                     const lyricsUrl = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(song)}`;
                     console.log(`Fetching lyrics from: ${lyricsUrl}`);
                     
@@ -136,7 +129,6 @@ const server = http.createServer(async (req, res) => {
                 }
 
                 try {
-                    // Try to fetch artist info
                     const artistUrl = `https://theaudiodb.com/api/v1/json/1/search.php?s=${encodeURIComponent(artist)}`;
                     console.log(`Fetching artist info from: ${artistUrl}`);
                     
@@ -160,7 +152,6 @@ const server = http.createServer(async (req, res) => {
                     console.log('Artist info fetch error:', e.message);
                 }
 
-                // If neither lyrics nor artist info found, still return success with available data
                 console.log(`Final result - Lyrics: ${result.lyrics ? 'YES' : 'NO'}, Artist Info: ${result.artistInfo ? 'YES' : 'NO'}`);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -169,18 +160,13 @@ const server = http.createServer(async (req, res) => {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ success: false, error: 'Invalid API path' }));
             }
-        }
-        // Health check
-        else if (pathname === '/api/health') {
+        } else if (pathname === '/api/health') {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ status: 'OK', message: 'Server is running' }));
-        }
-        // Serve static files
-        else {
+        } else {
             let filePath = pathname === '/' ? '/index.html' : pathname;
             filePath = path.join(__dirname, 'public', filePath);
             
-            // Security check - prevent directory traversal
             if (!filePath.startsWith(path.join(__dirname, 'public'))) {
                 res.writeHead(403);
                 res.end('Forbidden');
@@ -203,14 +189,12 @@ const server = http.createServer(async (req, res) => {
     }
 });
 
-// Start server
 server.listen(PORT, () => {
     console.log(`🎵 Music Explorer Server running on port ${PORT}`);
     console.log(`📁 Serving static files from 'public' directory`);
     console.log(`🌐 Access the app at: http://localhost:${PORT}`);
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('Server shutting down gracefully...');
     server.close(() => {
